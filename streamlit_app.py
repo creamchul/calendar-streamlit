@@ -14,11 +14,12 @@ st.markdown("""
 <style>
     /* 전체 테마 색상 */
     :root {
-        --primary-color: #7C3AED;
-        --secondary-color: #A78BFA;
-        --background-color: #F5F3FF;
-        --text-color: #1F2937;
-        --border-color: #E5E7EB;
+        --primary-color: #000000;
+        --secondary-color: #333333;
+        --background-color: #ffffff;
+        --text-color: #1d1d1f;
+        --border-color: #e5e5e5;
+        --hover-color: #f5f5f7;
     }
 
     /* 전체 배경 */
@@ -26,6 +27,7 @@ st.markdown("""
         background-color: var(--background-color);
         max-width: 100%;
         padding: 1rem;
+        color: var(--text-color);
     }
 
     /* 반응형 컨테이너 */
@@ -53,25 +55,16 @@ st.markdown("""
             margin-bottom: 0.75rem !important;
             padding: 0.75rem !important;
         }
-        
-        .event-card h4 {
-            font-size: 1rem !important;
-        }
-        
-        .event-card p {
-            font-size: 0.875rem !important;
-        }
     }
 
     /* 헤더 스타일 */
     .main-header {
-        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-        color: white;
+        background-color: var(--background-color);
+        color: var(--text-color);
         padding: 1.5rem;
-        border-radius: 1rem;
         margin-bottom: 1.5rem;
         text-align: center;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border-bottom: 1px solid var(--border-color);
     }
 
     @media (max-width: 768px) {
@@ -87,10 +80,9 @@ st.markdown("""
 
     /* 카드 스타일 */
     .card {
-        background-color: white;
+        background-color: var(--background-color);
         padding: 1.5rem;
-        border-radius: 1rem;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        border-radius: 0;
         margin-bottom: 1rem;
         border: 1px solid var(--border-color);
     }
@@ -99,17 +91,18 @@ st.markdown("""
         .card {
             padding: 1rem;
             margin-bottom: 0.75rem;
+            border: none;
         }
     }
 
     /* 버튼 스타일 */
     .stButton > button {
-        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        background-color: var(--primary-color);
         color: white;
         border: none;
-        border-radius: 0.5rem;
+        border-radius: 0;
         padding: 0.5rem 1rem;
-        font-weight: 600;
+        font-weight: 500;
         transition: all 0.3s ease;
         width: 100%;
     }
@@ -122,14 +115,13 @@ st.markdown("""
     }
 
     .stButton > button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        background-color: var(--secondary-color);
     }
 
     /* 입력 필드 스타일 */
     .stTextInput > div > div > input,
     .stTextArea > div > div > textarea {
-        border-radius: 0.5rem;
+        border-radius: 0;
         border: 1px solid var(--border-color);
         padding: 0.75rem;
     }
@@ -142,62 +134,31 @@ st.markdown("""
         }
     }
 
-    /* 달력 그리드 */
-    .calendar-grid {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        gap: 0.5rem;
-        margin-bottom: 1rem;
-    }
-
-    .calendar-day {
-        background-color: white;
-        padding: 0.75rem;
-        border-radius: 0.5rem;
-        text-align: center;
-        border: 1px solid var(--border-color);
-        min-height: 80px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .calendar-day.today {
-        background-color: var(--background-color);
-        border: 2px solid var(--primary-color);
-    }
-
-    .calendar-day.has-events {
-        background-color: #EEF2FF;
-    }
-
     /* 이벤트 카드 */
     .event-card {
-        background: white;
+        background: var(--background-color);
         padding: 1rem;
-        border-radius: 0.5rem;
+        border-radius: 0;
         margin-bottom: 1rem;
         border: 1px solid var(--border-color);
         transition: all 0.3s ease;
     }
 
     .event-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        background-color: var(--hover-color);
     }
 
     /* 진행률 바 */
     .progress-container {
         margin-top: 0.5rem;
-        background-color: #F3F4F6;
-        border-radius: 0.5rem;
+        background-color: var(--border-color);
+        border-radius: 0;
         overflow: hidden;
     }
 
     .progress-bar {
         height: 0.5rem;
-        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        background-color: var(--primary-color);
         transition: width 0.3s ease;
     }
 
@@ -205,25 +166,12 @@ st.markdown("""
     .tag {
         display: inline-block;
         padding: 0.25rem 0.75rem;
-        border-radius: 1rem;
+        border-radius: 0;
         font-size: 0.875rem;
         margin-right: 0.5rem;
         margin-bottom: 0.5rem;
-    }
-
-    .tag-high {
-        background-color: #FEE2E2;
-        color: #DC2626;
-    }
-
-    .tag-medium {
-        background-color: #FEF3C7;
-        color: #D97706;
-    }
-
-    .tag-low {
-        background-color: #ECFDF5;
-        color: #059669;
+        background-color: var(--hover-color);
+        color: var(--text-color);
     }
 
     /* 슬라이더 스타일 */
@@ -243,6 +191,22 @@ st.markdown("""
             flex-direction: column;
             gap: 0.75rem;
         }
+    }
+
+    /* 제목 스타일 */
+    h1, h2, h3, h4 {
+        color: var(--text-color);
+        font-weight: 500;
+    }
+
+    /* 링크 스타일 */
+    a {
+        color: var(--primary-color);
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: underline;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -308,7 +272,7 @@ def login_page():
 def calendar_page():
     # 헤더 영역
     st.markdown('<div class="main-header">', unsafe_allow_html=True)
-    st.markdown('<h1>📅 일정 관리 시스템</h1>', unsafe_allow_html=True)
+    st.markdown('<h1>일정 관리</h1>', unsafe_allow_html=True)
     if st.button("로그아웃", key="logout"):
         st.session_state.user_id = None
         st.experimental_rerun()
@@ -324,7 +288,7 @@ def calendar_page():
         st.markdown("### 일정 수정")
         event = st.session_state.editing_event
     else:
-        st.markdown("### 새 일정 추가")
+        st.markdown("### 새 일정")
         event = None
     
     with st.form("event_form"):
@@ -351,9 +315,9 @@ def calendar_page():
             format="%d%%")
         
         if event:
-            submit = st.form_submit_button("일정 수정")
+            submit = st.form_submit_button("수정")
         else:
-            submit = st.form_submit_button("일정 추가")
+            submit = st.form_submit_button("추가")
         
         if submit:
             if title and description:
@@ -385,66 +349,8 @@ def calendar_page():
     st.markdown('</div>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
     
-    # 오른쪽 컬럼: 캘린더 뷰
+    # 오른쪽 컬럼: 일정 목록
     st.markdown('<div style="flex: 3;">', unsafe_allow_html=True)
-    st.markdown('<div class="card">', unsafe_allow_html=True)
-    # 달력 네비게이션
-    if 'selected_date' not in st.session_state:
-        st.session_state.selected_date = datetime.now()
-    
-    nav_cols = st.columns([1,3,1])
-    with nav_cols[0]:
-        if st.button("◀"):
-            st.session_state.selected_date -= timedelta(days=30)
-            st.experimental_rerun()
-    with nav_cols[1]:
-        st.markdown(f"<h2 style='text-align: center;'>{st.session_state.selected_date.strftime('%Y년 %m월')}</h2>", 
-                   unsafe_allow_html=True)
-    with nav_cols[2]:
-        if st.button("▶"):
-            st.session_state.selected_date += timedelta(days=30)
-            st.experimental_rerun()
-    
-    # 달력 그리드
-    month_start = st.session_state.selected_date.replace(day=1)
-    month_end = (month_start + timedelta(days=32)).replace(day=1) - timedelta(days=1)
-    
-    # 현재 월의 일정
-    current_events = [
-        event for event in st.session_state.events
-        if (st.session_state.user_id == event.get('user_id') and
-            datetime.strptime(event.get('start_date', '2099-12-31'), '%Y-%m-%d').date() <= month_end.date() and
-            datetime.strptime(event.get('end_date', '2000-01-01'), '%Y-%m-%d').date() >= month_start.date())
-    ]
-    
-    # 달력 그리드 생성
-    cal = calendar.monthcalendar(month_start.year, month_start.month)
-    st.markdown('<div class="calendar-grid">', unsafe_allow_html=True)
-    
-    # 요일 헤더
-    for day in ["일", "월", "화", "수", "목", "금", "토"]:
-        st.markdown(f'<div class="calendar-day"><strong>{day}</strong></div>', unsafe_allow_html=True)
-    
-    # 날짜 그리드
-    for week in cal:
-        for day in week:
-            if day == 0:
-                st.markdown('<div class="calendar-day"></div>', unsafe_allow_html=True)
-            else:
-                date = month_start.replace(day=day)
-                today_class = " today" if date.date() == datetime.now().date() else ""
-                has_events = any(datetime.strptime(event['start_date'], '%Y-%m-%d').date() <= date.date() <= 
-                               datetime.strptime(event['end_date'], '%Y-%m-%d').date() 
-                               for event in current_events)
-                has_events_class = " has-events" if has_events else ""
-                
-                st.markdown(f'<div class="calendar-day{today_class}{has_events_class}">{day}</div>', 
-                          unsafe_allow_html=True)
-    
-    st.markdown('</div>', unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
-    
-    # 일정 목록
     st.markdown('<div class="card">', unsafe_allow_html=True)
     st.markdown("### 이번 달 일정")
     
