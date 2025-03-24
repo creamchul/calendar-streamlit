@@ -278,6 +278,19 @@ def calendar_page():
         st.experimental_rerun()
     st.markdown('</div>', unsafe_allow_html=True)
     
+    # 현재 날짜 정보
+    today = datetime.now()
+    month_start = today.replace(day=1)
+    month_end = (month_start + timedelta(days=32)).replace(day=1) - timedelta(days=1)
+    
+    # 현재 월의 일정
+    current_events = [
+        event for event in st.session_state.events
+        if (st.session_state.user_id == event.get('user_id') and
+            datetime.strptime(event.get('start_date', '2099-12-31'), '%Y-%m-%d').date() <= month_end.date() and
+            datetime.strptime(event.get('end_date', '2000-01-01'), '%Y-%m-%d').date() >= month_start.date())
+    ]
+    
     # 메인 컨텐츠
     st.markdown('<div class="main-content">', unsafe_allow_html=True)
     
