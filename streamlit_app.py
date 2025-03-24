@@ -45,8 +45,18 @@ if 'users' not in st.session_state:
         {'id': 1, 'email': 'test@test.com', 'password': 'test123', 'name': '테스트 사용자'}
     ]
 
-if 'events' not in st.session_state:
+# 이벤트 데이터 초기화 및 마이그레이션
+if 'events' not in st.session_state or not isinstance(st.session_state.events, list):
     st.session_state.events = []
+else:
+    # 기존 이벤트 데이터 마이그레이션
+    migrated_events = []
+    for event in st.session_state.events:
+        if isinstance(event, dict):
+            if 'progress' not in event:
+                event['progress'] = 0
+            migrated_events.append(event)
+    st.session_state.events = migrated_events
 
 if 'user_id' not in st.session_state:
     st.session_state.user_id = None
@@ -114,18 +124,21 @@ def calendar_page():
             progress = st.slider("진행률", 0, 100, 0, 5, format="%d%%")
             
             if st.form_submit_button("일정 추가", use_container_width=True):
-                new_event = {
-                    'id': len(st.session_state.events) + 1,
-                    'user_id': st.session_state.user_id,
-                    'title': title,
-                    'description': description,
-                    'start_date': start_date.strftime('%Y-%m-%d'),
-                    'end_date': end_date.strftime('%Y-%m-%d'),
-                    'progress': progress
-                }
-                st.session_state.events.append(new_event)
-                st.success("일정이 추가되었습니다!")
-                st.experimental_rerun()
+                if title and description:  # 필수 필드 검증
+                    new_event = {
+                        'id': len(st.session_state.events) + 1,
+                        'user_id': st.session_state.user_id,
+                        'title': title,
+                        'description': description,
+                        'start_date': start_date.strftime('%Y-%m-%d'),
+                        'end_date': end_date.strftime('%Y-%m-%d'),
+                        'progress': progress
+                    }
+                    st.session_state.events.append(new_event)
+                    st.success("일정이 추가되었습니다!")
+                    st.experimental_rerun()
+                else:
+                    st.error("제목과 설명을 입력해주세요.")
     
     # 오른쪽 컬럼: 일정 목록
     with col2:
@@ -135,9 +148,9 @@ def calendar_page():
         
         current_events = [
             event for event in st.session_state.events
-            if (st.session_state.user_id == event['user_id'] and
-                datetime.strptime(event['start_date'], '%Y-%m-%d').date() <= month_end.date() and
-                datetime.strptime(event['end_date'], '%Y-%m-%d').date() >= month_start.date())
+            if (st.session_state.user_id == event.get('user_id') and
+                datetime.strptime(event.get('start_date', '2099-12-31'), '%Y-%m-%d').date() <= month_end.date() and
+                datetime.strptime(event.get('end_date', '2000-01-01'), '%Y-%m-%d').date() >= month_start.date())
         ]
         
         if not current_events:
@@ -145,15 +158,16 @@ def calendar_page():
         
         for event in current_events:
             with st.container():
+                progress = event.get('progress', 0)  # 기본값 0으로 설정
                 st.markdown(f"""
                 <div class="event-card">
-                    <h4>{event['title']}</h4>
-                    <p><small>🗓 {event['start_date']} ~ {event['end_date']}</small></p>
-                    <p>{event['description']}</p>
+                    <h4>{event.get('title', '제목 없음')}</h4>
+                    <p><small>🗓 {event.get('start_date', '날짜 없음')} ~ {event.get('end_date', '날짜 없음')}</small></p>
+                    <p>{event.get('description', '설명 없음')}</p>
                     <div class="progress-container">
-                        <p><strong>진행률:</strong> {event['progress']}%</p>
+                        <p><strong>진행률:</strong> {progress}%</p>
                         <div style="width:100%; height:20px; background-color:#e9ecef; border-radius:5px;">
-                            <div style="width:{event['progress']}%; height:100%; background-color:#007bff; border-radius:5px;"></div>
+                            <div style="width:{progress}%; height:100%; background-color:#007bff; border-radius:5px;"></div>
                         </div>
                     </div>
                 </div>
@@ -167,10 +181,10 @@ def calendar_page():
                         st.experimental_rerun()
                 with col1:
                     new_progress = st.slider("진행률 수정", 
-                                          0, 100, event['progress'], 5,
+                                          0, 100, progress, 5,
                                           format="%d%%",
                                           key=f"progress_{event['id']}")
-                    if new_progress != event['progress']:
+                    if new_progress != progress:
                         for e in st.session_state.events:
                             if e['id'] == event['id']:
                                 e['progress'] = new_progress
