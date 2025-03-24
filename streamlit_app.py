@@ -1,11 +1,12 @@
 import streamlit as st
-import pandas as pd
 from datetime import datetime, timedelta
-import os
-from dotenv import load_dotenv
 
-# 환경 변수 로드
-load_dotenv()
+# 페이지 설정
+st.set_page_config(
+    page_title="일정 관리 시스템",
+    page_icon="📅",
+    layout="wide"
+)
 
 # 초기 데이터 설정
 if 'users' not in st.session_state:
@@ -16,18 +17,9 @@ if 'users' not in st.session_state:
 if 'events' not in st.session_state:
     st.session_state.events = []
 
-# 페이지 설정
-st.set_page_config(
-    page_title="일정 관리 시스템",
-    page_icon="📅",
-    layout="wide"
-)
-
-# 세션 상태 초기화
 if 'user_id' not in st.session_state:
     st.session_state.user_id = None
 
-# 로그인 페이지
 def login_page():
     st.title("로그인")
     
@@ -35,7 +27,6 @@ def login_page():
     password = st.text_input("비밀번호", type="password")
     
     if st.button("로그인"):
-        # 사용자 확인
         user = next((user for user in st.session_state.users 
                     if user['email'] == email and user['password'] == password), None)
         
@@ -46,9 +37,12 @@ def login_page():
         else:
             st.error("이메일 또는 비밀번호가 잘못되었습니다.")
 
-# 메인 캘린더 페이지
 def calendar_page():
     st.title("일정 관리 시스템")
+    
+    if st.button("로그아웃"):
+        st.session_state.user_id = None
+        st.experimental_rerun()
     
     # 현재 날짜 정보
     today = datetime.now()
@@ -65,17 +59,6 @@ def calendar_page():
     with col3:
         if st.button("▶"):
             st.session_state.selected_date += timedelta(days=30)
-    
-    # 현재 월의 일정 가져오기
-    month_start = st.session_state.selected_date.replace(day=1)
-    month_end = (month_start + timedelta(days=32)).replace(day=1) - timedelta(days=1)
-    
-    current_events = [
-        event for event in st.session_state.events
-        if (st.session_state.user_id == event['user_id'] and
-            datetime.strptime(event['start_date'], '%Y-%m-%d').date() <= month_end.date() and
-            datetime.strptime(event['end_date'], '%Y-%m-%d').date() >= month_start.date())
-    ]
     
     # 일정 추가 버튼
     if st.button("새 일정 추가"):
@@ -102,9 +85,19 @@ def calendar_page():
                 st.success("일정이 추가되었습니다!")
                 st.session_state.adding_event = False
                 st.experimental_rerun()
-    
+
     # 일정 목록 표시
     st.write("### 이번 달 일정")
+    month_start = st.session_state.selected_date.replace(day=1)
+    month_end = (month_start + timedelta(days=32)).replace(day=1) - timedelta(days=1)
+    
+    current_events = [
+        event for event in st.session_state.events
+        if (st.session_state.user_id == event['user_id'] and
+            datetime.strptime(event['start_date'], '%Y-%m-%d').date() <= month_end.date() and
+            datetime.strptime(event['end_date'], '%Y-%m-%d').date() >= month_start.date())
+    ]
+    
     for event in current_events:
         with st.expander(f"{event['title']} ({event['start_date']})"):
             st.write(f"설명: {event['description']}")
@@ -115,7 +108,6 @@ def calendar_page():
                 st.success("일정이 삭제되었습니다!")
                 st.experimental_rerun()
 
-# 메인 앱 로직
 def main():
     if st.session_state.user_id is None:
         login_page()
